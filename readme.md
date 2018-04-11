@@ -2,7 +2,7 @@
 
 This is a software package for plotting and animating three-strategy evolutionary games on a triangular simplex.
 * The package can be used to create phase portraits of 3-strategy games
-<img src="images/simplex_example.png" width="440" height="400" />
+<img src="images/simplex_example.png" width="500" height="400" />
 
 * It can also be used to animate transient behavior of the game  
 <img src="images/animation_1.gif" width="400" height="400" />
@@ -16,9 +16,13 @@ This software package depends on the following libraries:
 * `imageio, moviepy` for animations
 * `tqdm` for progress bar
 
+Installing the package from `pypi` will take care of all the dependencies
+```
+pip install egtplot
+```
 ### Installation
 
-* The software is also available on `pypi`
+* The software is available on `pypi`
 ```
 pip install egtplot
 ```
