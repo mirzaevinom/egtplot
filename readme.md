@@ -51,10 +51,10 @@ python setup.py install
 If you use this program to do research that leads to publication, we ask that you acknowledge use of this program by citing the following in your publication:
 
 ```
-Mirzaev I., Williamson D. and Scott J., egtplot: A Python Package for 3-Strategy Evolutionary Games,
+Mirzaev I., Williamson D. and Scott J., egtplot: A Python Package for 3-Strategy Evolutionary Games, https://doi.org/10.1101/300004
 ```
 
 ### Acknowledgements
 
 * This material is based upon work supported by the National Science Foundation under Agreement No. 0931642 (Mathematical Biosciences Institute at Ohio State University).
-* We have used some chunks of code publicly provided by [Hanna Schenk](https://github.com/HannaSchenk/RQchaos).
+* We gratefully acknowledge the work of Hanna Schenk whose code on her [github]((https://github.com/HannaSchenk/RQchaos) inspired this project.
