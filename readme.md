@@ -2,41 +2,59 @@
 
 This is a software package for plotting and animating three-strategy evolutionary games on a triangular simplex.
 * The package can be used to create phase portraits of 3-strategy games
+
 <img src="images/simplex_example.png" width="500" height="400" />
 
 * It can also be used to animate transient behavior of the game  
+
 <img src="images/animation_1.gif" width="400" height="400" />
 
 ### Dependencies
 
-This software package depends on the following libraries:
+The program is written and tested on Python >=3.5. This software package depends on the following libraries:
 
 * `numpy>=1.13, scipy, shapely` for computations
 * `matplotlib` for static plots
 * `imageio, moviepy` for animations
 * `tqdm` for progress bar
 
-Installing the package from `pypi` will take care of all the dependencies
+Installing the package from `PyPi` will take care of all the dependencies
 ```
 pip install egtplot
 ```
 ### Installation
 
-* The software is available on `pypi`
+* Easiest way to install the package is through `PyPi`
 ```
 pip install egtplot
 ```
 
-* You can clone this repository using `git` software
+* You can clone this repository using `git` software and run setup.
 ```
 git clone https://github.com/mirzaevinom/egtplot.git
+cd egtplot
+python setup.py install
 ```
 
-* Alternatively you can download and extract a zip file of this repo. Then  `egtplot.py` file can be called locally as a module.
+* Alternatively you can download and extract a zip file of this repo:
 ```
-import egtplot
+cd egtplot-master
+python setup.py install
 ```
 
 ### Usage
 * This software has two main functions: `plot_static` for plotting static simplex figures and `plot_animated` for generating simplex animations.
 * For detailed usage of these functions we refer to our interactive jupyter notebook: [`egtplot_demonstration.ipynb`](egtplot_demonstration.ipynb)
+
+### Citation
+
+If you use this program to do research that leads to publication, we ask that you acknowledge use of this program by citing the following in your publication:
+
+```
+Mirzaev I., Williamson D. and Scott J., egtplot: A python package for 3-Strategy Evolutionary Games,
+```
+
+### Acknowledgements
+
+* This material is based upon work supported by the National Science Foundation under Agreement No. 0931642 (Mathematical Biosciences Institute at Ohio State University).
+* We have used some chunks of code publicly provided by [Hanna Schenk](https://github.com/HannaSchenk/RQchaos).
