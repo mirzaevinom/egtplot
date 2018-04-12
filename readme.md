@@ -45,7 +45,7 @@ python setup.py install
 ### Usage
 * This software has two main functions: `plot_static` for plotting static simplex figures and `plot_animated` for generating simplex animations.
 * For detailed usage of these functions we refer to our interactive jupyter notebook: [`egtplot_demonstration.ipynb`](egtplot_demonstration.ipynb)
-* We also welcome comments and questions regarding our whitepaper on [biorXiv](https://www.biorxiv.org/content/early/2018/04/12/300004) which describes the package and its usage. The content is neraly identical to the jupyter notebook linked above.
+* We also welcome comments and questions regarding our whitepaper on [bioRxiv](https://www.biorxiv.org/content/early/2018/04/12/300004) which describes the package and its usage. The content is nearly identical to the jupyter notebook linked above.
 
 ### Citation
 If you use this program to do research that leads to publication, we ask that you acknowledge use of this program by citing the following in your publication:
