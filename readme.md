@@ -56,5 +56,5 @@ Mirzaev I., Williamson D. and Scott J., egtplot: A Python Package for 3-Strategy
 
 ### Acknowledgements
 
-* This material is based upon work supported by the National Science Foundation under Agreement No. 0931642 (Mathematical Biosciences Institute at Ohio State University).
+* Authors would like to thank [Mathematical Biosciences Institue](http://mbi.osu.edu) (MBI) at Ohio State University, for partially supporting this research. MBI receives its funding through the National Science Foundation grant DMS 1440386.
 * We gratefully acknowledge the work of Hanna Schenk whose code on her [github](https://github.com/HannaSchenk/RQchaos) inspired this project.
