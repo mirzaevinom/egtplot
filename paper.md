@@ -10,7 +10,7 @@ authors:
   affiliation: "1, 2"
 - name: Drew FK Williamson*
   orcid: 0000-0003-1745-8846
-  affiliation: "2"
+  affiliation: 2
 - name: Jacob G Scott
   orcid: 0000-0003-2971-7673
   affiliation: "2, 3"
@@ -69,7 +69,7 @@ By altering the default values for the plotting function, a variety of different
 
 <center>
 <figure>
-  <img src='images/output_14_1.png' width="40%"><img src='output_16_1.png' width="40%">
+  <img src='images/output_14_1.png' width="40%"><img src='images/output_16_1.png' width="40%">
 
   <figcaption> __Figure 2.__ _(Left)_ Background of the simplex is colored by the speed at which the points would travel along their trajectories. _(Right)_ Displaying the paths taken by each initial condition.
   </figcaption>
@@ -95,5 +95,9 @@ Finally, `egtplot` also has functionality to display animated versions of these 
 ## Acknowledgements
 
 The authors would like to thank Mathematical Biosciences Institue (MBI) at Ohio State University, for partially supporting this research. MBI receives its funding through the National Science Foundation grant DMS 1440386. We gratefully acknowledge the work of Hanna Schenk whose code on her [GitHub](https://github.com/HannaSchenk/RQchaos) inspired this project.
+
+## Authorship
+
+Inom Mirzaev and Drew FK Williamson contributed equally to this work.
 
 ## References
