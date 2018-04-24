@@ -1,5 +1,5 @@
 ---
-title: 'egtplot: A Python Package for 3-Strategy Evolutionary Games'
+title: 'egtplot: A Python Package for Three-Strategy Evolutionary Games'
 tags:
 - python
 - evolutionary game theory
