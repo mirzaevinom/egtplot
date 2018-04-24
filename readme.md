@@ -9,6 +9,10 @@ This is a software package for plotting and animating three-strategy evolutionar
 
 <img src="images/animation_1.gif" width="400" height="400" />
 
+### Authorship
+
+Inom Mirzaev and [Drew FK Williamson](https://github.com/drew-williamson) contributed equally to this work.
+
 ### Dependencies
 
 The program is written and tested on Python >=3.5. This software package depends on the following libraries:
