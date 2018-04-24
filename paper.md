@@ -5,10 +5,10 @@ tags:
 - evolutionary game theory
 - visualization
 authors:
-- name: Inom Mirzaev*
+- name: Inom Mirzaev
   orcid: 0000-0003-1493-1802
   affiliation: "1, 2"
-- name: Drew FK Williamson*
+- name: Drew FK Williamson
   orcid: 0000-0003-1745-8846
   affiliation: 2
 - name: Jacob G Scott
