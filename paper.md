@@ -21,7 +21,7 @@ affiliations:
   index: 2
 - name: Department of Radiation Oncology, Cleveland Clinic Foundation
   index: 3
-date: 24 April 2018
+date: 25 April 2018
 bibliography: joss_bib.bib
 ---
 
@@ -53,42 +53,17 @@ where $\alpha$ is the benefit derived from the cooperation between a S cell and 
 
 Using our package, we can quickly and easily analyze this game numerically and visually. To start, let us choose some simple values for each parameter: $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$. __Figure 1__ illustrates the output of the static visualization with the default parameters. This simplex depicts stable equilibria within the S-D and D-I edges, unstable equilibria at each vertex, and shows that every initial condition on the S-I edge is a stable equilibria.
 
-<center>
-<figure>
-  <img src='images/output_8_1.png' width="40%">
-
-  <figcaption> __Figure 1.__ Standard output of the package for $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$.
-  </figcaption>
-
-</figure>
-</center>
+![Standard output of the package for $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$.](images/output_8_1.png){ width=50% }
 
 # Altering Plot Outputs
 
 By altering the default values for the plotting function, a variety of different plotting styles can be achieved as demonstrated in __Figure 2__.
 
-<center>
-<figure>
-  <img src='images/output_14_1.png' width="40%"><img src='images/output_16_1.png' width="40%">
-
-  <figcaption> __Figure 2.__ _(Left)_ Background of the simplex is colored by the speed at which the points would travel along their trajectories. _(Right)_ Displaying the paths taken by each initial condition.
-  </figcaption>
-
-</figure>
-</center>
+![(_Left_) Background of the simplex is colored by the speed at which the points would travel along their trajectories. (_Right_) Displaying the paths taken by each initial condition.](images/two_parts.png){ width=80% }
 
 Additionally, multiple parameter values can be easily combined into subplots of a larger image. In __Figure 3__, we vary $\alpha$ and $\beta$ values to see how they would independently affect the dynamics of the game.
 
-<center>
-<figure>
-  <img src='images/output_20_1.png' width="90%">
-
-  <figcaption> __Figure 3.__ Parameter sweep for different $\alpha$ and $\beta$ values.
-  </figcaption>
-
-</figure>
-</center>
-
+![Parameter sweep for different $\alpha$ and $\beta$ values.](images/output_20_1.png){ width=80% }
 
 Finally, `egtplot` also has functionality to display animated versions of these plots. For further information on the use of the software and how these plots were created, please see the [documentation](https://github.com/mirzaevinom/egtplot) and [example notebook](https://github.com/mirzaevinom/egtplot/blob/master/egtplot_demonstration.ipynb).
 
