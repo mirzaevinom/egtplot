@@ -1,0 +1,9 @@
+.ipynb_checkpoints/LICENSE-checkpoint.txt
+.ipynb_checkpoints/egtplot_demonstration-checkpoint.ipynb
+.ipynb_checkpoints/setup-checkpoint.cfg
+.ipynb_checkpoints/setup-checkpoint.py
+paper.pdf
+.DS_Store
+dist/.DS_Store
+dist/egtplot-0.3.tar.gz
+images/.DS_Store
