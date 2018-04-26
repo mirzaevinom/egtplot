@@ -23,12 +23,6 @@ affiliations:
   index: 3
 date: 25 April 2018
 bibliography: joss_bib.bib
-
-output:
-  rmarkdown::pdf_document:
-    fig_caption: yes        
-    includes:  
-      in_header: figure_placement.tex
 ---
 
 # Summary
@@ -58,19 +52,31 @@ We demonstrate the features of `egtplot` via an example drawn from work modellin
 where $\alpha$ is the benefit derived from the cooperation between a S cell and a D cell, $\gamma$ is the cost of being microenvironmentally independent, $\beta$ is the cost of extracting resources from the microenvironment, and $\rho$ is the benefit derived by a D cell from paracrine growth factors produced by I cells. This paper studies how the healthy cells that make up the majority of the prostate can cooperate and compete with mutant protate cells to produce a clinically-detectable prostate cancer.
 
 Using our package, we can quickly and easily analyze this game numerically and visually. To start, let us choose some simple values for each parameter: $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$. __Figure 1__ illustrates the output of the static visualization with the default parameters. This simplex depicts stable equilibria within the S-D and D-I edges, unstable equilibria at each vertex, and shows that every initial condition on the S-I edge is a stable equilibria.
+<!-- ![Standard output of the package for $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$.](images/output_8_1.png){ width=50% } -->
 
-![Standard output of the package for $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$.](images/output_8_1.png){ width=50% }
+\begin{figure}[h!]\centering
+  {\includegraphics[width=\textwidth]{images/output_8_1.png}}
+  \caption{Standard output of the package for $\alpha = 1$, $\beta = 1$, $\gamma = 1$, and $\rho = 1$.}
+\end{figure}
 
 # Altering Plot Outputs
 
 By altering the default values for the plotting function, a variety of different plotting styles can be achieved as demonstrated in __Figure 2__.
+<!--
+![(_Left_) Background of the simplex is colored by the speed at which the points would travel along their trajectories. (_Right_) Displaying the paths taken by each initial condition.](images/two_parts.png){ width=70% } -->
 
-![(_Left_) Background of the simplex is colored by the speed at which the points would travel along their trajectories. (_Right_) Displaying the paths taken by each initial condition.](images/two_parts.png){ width=70% }
+\begin{figure}[h!]\centering
+  {\includegraphics[width=\textwidth]{images/two_parts.png}}
+  \caption{(_Left_) Background of the simplex is colored by the speed at which the points would travel along their trajectories. (_Right_) Displaying the paths taken by each initial condition.}
+\end{figure}
 
 Additionally, multiple parameter values can be easily combined into subplots of a larger image. In __Figure 3__, we vary $\alpha$ and $\beta$ values to see how they would independently affect the dynamics of the game.
+<!-- ![Parameter sweep for different $\alpha$ and $\beta$ values.](images/output_20_1.png){ width=50% } -->
 
-![Parameter sweep for different $\alpha$ and $\beta$ values.](images/output_20_1.png){ width=50% }
-
+\begin{figure}[h!]\centering
+  {\includegraphics[width=\textwidth]{images/output_20_1.png}}
+  \caption{Parameter sweep for different $\alpha$ and $\beta$ values.}
+\end{figure}
 
 Finally, `egtplot` also has functionality to display animated versions of these plots. For further information on the use of the software and how these plots were created, please see the [documentation](https://github.com/mirzaevinom/egtplot) and [example notebook](https://github.com/mirzaevinom/egtplot/blob/master/egtplot_demonstration.ipynb).
 
