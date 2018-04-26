@@ -64,7 +64,7 @@ By altering the default values for the plotting function, a variety of different
 
 \begin{figure}[h!]\centering
   {\includegraphics[width=\textwidth]{images/two_parts.png}}
-  \caption{]textit{Left} Background of the simplex is colored by the speed at which the points would travel along their trajectories. \textit{Right} Displaying the paths taken by each initial condition.}
+  \caption{\textit{Left} Background of the simplex is colored by the speed at which the points would travel along their trajectories. \textit{Right} Displaying the paths taken by each initial condition.}
 \end{figure}
 
 Additionally, multiple parameter values can be easily combined into subplots of a larger image. In __Figure 3__, we vary $\alpha$ and $\beta$ values to see how they would independently affect the dynamics of the game.
