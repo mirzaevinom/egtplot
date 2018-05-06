@@ -7,3 +7,6 @@ paper.pdf
 dist/.DS_Store
 dist/egtplot-0.3.tar.gz
 images/.DS_Store
+egtplot/scrap-Copy1.ipynb
+egtplot/scrap.ipynb
+egtplot/testing.py

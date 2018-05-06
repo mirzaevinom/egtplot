@@ -3,6 +3,7 @@ from __future__ import division
 import inspect
 import sys
 from itertools import product
+import copy
 
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
@@ -31,7 +32,7 @@ def random_ics(ic_num):
     # draw points from the unit cube uniformly at random
     points = np.random.random((ic_num, 3))
 
-    # ensure the sum of each point's coordinates sum to 1
+    # ensure the sum of each point's coordinates is 1
     # (i.e, the point lies in the simplex)
     total = np.sum(points, axis=1).reshape((-1, 1))
     ics = np.divide(points, total)
@@ -179,150 +180,293 @@ def grid_ics():
     return ics
 
 
-# plot equilibria
-def equilibria(payoffs, ax):
-    """ Equilibria that are a single point will be plotted as such, with an
-    open circle indicating instability, filled circle indicating stability,
-    and a grey circle indicating sem-stability (i.e. that the second derivative
-    is exactly zero. When every initial condition is at an equilibrium in a
-    subgame, that is plotted as a cross-hatched rectangle over the entire edge.
+def proj_to_from(x, y):
+    """
+    Project points to 3D and back to 2D inside the simplex
+    """
+    return tuple(np.dot(proj, np.array([1 / (1 + x + y), x / (1 + x + y), y / (1 + x + y)])))
 
-    It's important to note that these equilibria are for points that lie
-    EXACTLY on the edge only."""
+
+def get_extraploted_line(p1,p2, EXTRAPOL_RATIO = 10):
+    """
+    Creates a line extrapoled in both directions p1->p2 and p2->p1
+    """
+
+    a = (p2[0]+EXTRAPOL_RATIO*(p1[0]-p2[0]), p2[1]+EXTRAPOL_RATIO*(p1[1]-p2[1]) )
+    b = (p1[0]+EXTRAPOL_RATIO*(p2[0]-p1[0]), p1[1]+EXTRAPOL_RATIO*(p2[1]-p1[1]) )
+
+    return LineString([a, b])
+
+
+def load_bomze_payoffs():
+    """
+    Loads Bomze payoffs as a list
+    """
+    import pickle
+    with open('./bomze_payoffs.pkl', 'rb') as input_file:
+        bomze_payoffs = pickle.load(input_file)
+
+    return bomze_payoffs
+
+
+def equilibria(payoffs, ax):
+
+    # copy the payoffs so we can alter one version and still have the original
+    payoff_mat = copy.deepcopy(payoffs)
+
+    # prepare for Bomze's testing (Appendix of Biol Cyb, 1983)
+    # transform payoffs to [0 0 0], [a b c], [d e f]
+    payoffs[:, 0] -= payoffs[0, 0]
+    payoffs[:, 1] -= payoffs[0, 1]
+    payoffs[:, 2] -= payoffs[0, 2]
+
+    # define variables for testing following Bomze's conventions
+    a = payoffs[1, 0]
+    b = payoffs[1, 1]
+    c = payoffs[1, 2]
+    d = payoffs[2, 0]
+    e = payoffs[2, 1]
+    f = payoffs[2, 2]
+
+    i = b * f - c * e
+    j = a * e - b * d
+    k = c * d - a * f
+
+    ####################
+    # domain equilibria
+    ####################
+    line_indicator = 0
+
+    if np.allclose(payoffs, np.zeros((3, 3))):
+        pass
+
+    elif i == 0 and j == 0 and k == 0:
+        line_indicator = 1
+
+        if c != 0:
+            endpts = [proj_to_from(-0.5, (0.5*b-a)/c), proj_to_from(0.5, -(a+0.5*b)/c)]
+            if np.any(~np.isfinite(endpts)):
+                endpts = [proj_to_from(-1, (1*b-a)/c), proj_to_from(1, -(a+1*b)/c)]
+        elif b != 0:
+            endpts = [proj_to_from(-a/b, -1), proj_to_from(-a/b, 1)]
+
+        elif f != 0:
+            endpts = [proj_to_from(-0.5, (0.5*e-d)/f), proj_to_from(0.5, -(0.5*e+d)/f)]
+            if np.any(~np.isfinite(endpts)):
+                endpts = [proj_to_from(-1, (1*e-d)/f), proj_to_from(1, -(1*e+d)/f)]
+        else:
+            endpts = [proj_to_from(-d/e, -1), proj_to_from(-d/e, 1)]
+
+        x_line = get_extraploted_line(*endpts)
+        poly = Polygon(zip(triangleline[0], triangleline[1]))
+        inter = np.asarray(x_line.intersection(poly).xy)
+        ax.plot(inter[0], inter[1], zorder=5, color='black', linewidth=4, linestyle='--')
+
+    elif (i < 0 and j < 0 and k < 0) or (i > 0 and j > 0 and k > 0):
+
+        x = k / i
+        y = j / i
+        eq = [1 / (1 + x + y), x / (1 + x + y), y / (1 + x + y)]
+        p = eq[1] / eq[0]
+        q = eq[2] / eq[0]
+
+        if b * f < c * e:
+            # equilibrium is a saddle point
+            stability = 'saddle'
+            eq_face = 'grey'
+        elif b * p + f * q < 0:
+            # equilibrium is a sink
+            stability = 'sink'
+            eq_face = 'black'
+        elif b * p + f * q > 0:
+            # equilibrium is a source
+            stability = 'source'
+            eq_face = 'white'
+        else:
+            # equilibrium is a "centre"
+            stability = 'centre'
+            eq_face = 'white'
+            eq_plot = np.dot(np.mat(proj), np.array(eq).reshape((3, 1)))
+            ax.scatter([eq_plot[0]], [eq_plot[1]], s=300,
+                       color='black', facecolor='black', marker='x', zorder=11)
+
+        eq_plot = np.dot(np.mat(proj), np.array(eq).reshape((3, 1)))
+        ax.scatter([eq_plot[0]], [eq_plot[1]], s=300,
+                   color='black', facecolor=eq_face, marker='o', zorder=10)
+
+    else:
+        pass
+
+    ##################
+    # edge equilibria
+    ##################
+
+    eqs = []
+    stabilities = []
+    to_test = []
+    line_eq_vertex_indicator = [-1]  # set to an impossible value unless an edge has an equilibrium
 
     # first, calculate the equilibria
-    subgame_eqs = []
-    stability_indicators = []
     subgames = [[0, 1], [1, 2], [0, 2]]
-    for subgame in subgames:
-        x = payoffs[subgame[0]][subgame[0]]
-        y = payoffs[subgame[0]][subgame[1]]
-        z = payoffs[subgame[1]][subgame[0]]
-        w = payoffs[subgame[1]][subgame[1]]
+    for i, subgame in enumerate(subgames):
+        y = payoff_mat[subgame[0]][subgame[1]]
+        z = payoff_mat[subgame[1]][subgame[0]]
+        x = payoff_mat[subgame[0]][subgame[0]]
+        w = payoff_mat[subgame[1]][subgame[1]]
 
         eq_num = w - y
         eq_stab_num = -(x - z) * (y - w)
         eq_denom = x - y - z + w
 
-        if (eq_denom == 0) and (eq_num == 0):  # if every solution is an equilibrium...
-            eq_subgame_full0 = np.zeros((1, 3))
-            eq_subgame_full0[0][0] += subgame[0] + subgame[1]
-            subgame_eqs.append(eq_subgame_full0)
+        # infinite numbers of edge equilibria
+        if (eq_denom == 0) and (eq_num == 0):
+            line_eq_vertex_indicator.extend(subgame)
+            eq_subgame = np.zeros((1, 3))
+            eq_subgame[0][0] += subgame[0] + subgame[1]
 
-            eq_subgame_stab0 = 'N/A'
-            stability_indicators.append(eq_subgame_stab0)
-
-        else:  # if a finite number of equilibria exist...
-            if eq_denom == 0:
-                eq_subgame = 0
-            else:
-                eq_subgame = eq_num / eq_denom  # ...compute the equilibrium
-
-            # equilibria must be in [0, 1]
-            if eq_subgame < 0:
-                eq_subgame = 0
-            elif eq_subgame > 1:
-                eq_subgame = 1
-
-            # set the coordinates of the equilibrium
-            eq_subgame_full0 = np.zeros((1, 3))
-            eq_subgame_full0[0][subgame[0]] += eq_subgame
-            eq_subgame_full0[0][subgame[1]] += (1 - eq_subgame)
-            subgame_eqs.append(eq_subgame_full0)
-
-            # compute the stability of the equilibrium
-            if eq_denom != 0:
-                eq_subgame_stab0 = eq_stab_num / eq_denom
-            else:
-                eq_subgame_stab0 = eq_stab_num
-
-            # set indicator variables for the equilibrium stability
-            if eq_subgame_stab0 < 0:
-                eq_subgame_stab0 = 1
-            elif eq_subgame_stab0 > 0:
-                eq_subgame_stab0 = 0
-            else:
-                eq_subgame_stab0 = 0.5
-            stability_indicators.append(eq_subgame_stab0)
-
-            if eq_subgame == 0:  # if there's an equilibrium at 0, there must also be one at 1
-                eq_subgame_full1 = np.zeros((1, 3))
-                eq_subgame_full1[0][subgame[1]] += eq_subgame
-                eq_subgame_full1[0][subgame[0]] += (1 - eq_subgame)
-                subgame_eqs.append(eq_subgame_full1)
-
-                # the stability is opposite the first
-                eq_subgame_stab1 = abs(1 - eq_subgame_stab0)
-                stability_indicators.append(eq_subgame_stab1)
-
-            elif eq_subgame == 1:  # if there's an equilibrium at 1, there must also be one at 0
-                eq_subgame_full1 = np.zeros((1, 3))
-                eq_subgame_full1[0][subgame[1]] += eq_subgame
-                eq_subgame_full1[0][subgame[0]] += (1 - eq_subgame)
-                subgame_eqs.append(eq_subgame_full1)
-
-                # the stability is opposite the first
-                eq_subgame_stab1 = abs(1 - eq_subgame_stab0)
-                stability_indicators.append(eq_subgame_stab1)
-
-            else:  # if there's an interior equilibrium, there will be one on each end
-                eq_subgame_full1 = np.zeros((1, 3))
-                eq_subgame_full1[0][subgame[0]] += 1
-                subgame_eqs.append(eq_subgame_full1)
-
-                # the stability is opposite the first
-                eq_subgame_stab1 = abs(1 - eq_subgame_stab0)
-                stability_indicators.append(eq_subgame_stab1)
-
-                eq_subgame_full2 = np.zeros((1, 3))
-                eq_subgame_full2[0][subgame[1]] += 1
-                subgame_eqs.append(eq_subgame_full2)
-
-                # the stability is opposite the first
-                eq_subgame_stab2 = abs(1 - eq_subgame_stab0)
-                stability_indicators.append(eq_subgame_stab2)
-
-
-
-    eqs = zip(subgame_eqs, stability_indicators)
-
-    # next, plot the equilibria
-    for val, stab in eqs:
-        if isinstance(stab, str):
-            if val[0][0] == 1:
+            # plot a white rectangle on that edge to cover up errant arrows
+            if eq_subgame[0][0] == 1:
                 left, bottom = triangleline[0][0], triangleline[1][0] - 0.05
                 width = ((triangleline[0][1] - triangleline[0][0]) ** 2 + (
                         triangleline[1][0] - triangleline[1][1]) ** 2) ** 0.5
                 angle = 0
                 height = 0.05
-            elif val[0][0] == 3:
+                edge_nums = [0,1]
+
+            elif eq_subgame[0][0] == 3:
                 left, bottom = triangleline[0][1], triangleline[1][1]
                 width = ((triangleline[0][2] - triangleline[0][1]) ** 2 + (
                         triangleline[1][2] - triangleline[1][1]) ** 2) ** 0.5
                 angle = 120
                 height = -0.05
+                edge_nums = [1,2]
+
             else:
                 left, bottom = triangleline[0][0], triangleline[1][0]
                 width = ((triangleline[0][0] - triangleline[0][2]) ** 2 + (
                         triangleline[1][0] - triangleline[1][2]) ** 2) ** 0.5
                 angle = 60
                 height = 0.05
-            p = patches.Rectangle(
-                (left, bottom), width=width, height=height, angle=angle, fill=False, hatch='+++++')
+                edge_nums = [0,2]
+
+            # Mask the weird looking arrows popping under edge equilibria
+            p = patches.Rectangle((left, bottom),
+                                  width=width,
+                                  height=height,
+                                  angle=angle,
+                                  fill=True,
+                                  zorder=4,
+                                  color='white')
             ax.add_patch(p)
+
+            # make the edge a dotted line to match line domain equilibria
+            ax.plot(triangleline[0, edge_nums], triangleline[1, edge_nums], zorder=5, color='black', linewidth=4, linestyle='--')
+
+        # finite numbers of edge equilibria
+        if eq_denom == 0:  # avoid a divide by zero error
+            eq_subgame = 1  # this may need to be switched to 0
         else:
-            eqs_plot = np.array(np.mat(proj) * np.mat(val.T))
-            if stab == 1:
-                eq_face = 'black'
-                size = 80
-            elif stab == 0:
-                eq_face = 'none'
-                size = 200
+            eq_subgame = eq_num / eq_denom  # compute the equilibrium position
+
+        if 0 < eq_subgame < 1:  # if there's an equilibria interior to the edge
+            # set the coordinates of the equilibrium
+            eq_subgame_full = np.zeros((1, 3))
+            eq_subgame_full[0][subgame[0]] += eq_subgame
+            eq_subgame_full[0][subgame[1]] += (1 - eq_subgame)
+            eqs.append(eq_subgame_full)
+
+            # make a point to test numerically that's close to the equilibrium but is in the domain
+            moved = eq_subgame_full.copy()
+            ind = np.argmin(moved)
+            moved[0, ind] += 0.01
+            moved = np.divide(moved, np.sum(moved))
+            to_test.append(moved)
+
+            # compute the stability of the equilibrium algebraically
+            if eq_denom != 0:
+                eq_subgame_stab = eq_stab_num / eq_denom
             else:
-                eq_face = 'grey'
-                size = 80
-            ax.scatter(eqs_plot[0], eqs_plot[1], s=size,
-                       color='black', facecolor=eq_face, marker='o')
+                eq_subgame_stab = eq_stab_num
+
+            # set indicator variables for the equilibrium stability
+            if eq_subgame_stab < 0:
+                stability = 'sink'
+            elif eq_subgame_stab > 0:
+                stability = 'source'
+            else:
+                stability = 'saddle'
+
+            stabilities.append(stability)
+
+    # if there are edge equilibria, test them numerically to get their global stability
+    if len(eqs) > 0:
+        eq_positions = np.squeeze(np.array(eqs), axis=1)
+        testing_positions = np.squeeze(np.array(to_test), axis=1)
+
+        before_distances = np.linalg.norm(eq_positions - testing_positions, axis=1)
+
+        ends = []
+        for x in range(len(testing_positions)):
+            yout = odeint(landscape, testing_positions[x], [0, 1000], args=(payoff_mat,))
+            ends.append(yout[1])
+
+        after_distances = np.linalg.norm(eq_positions - np.array(ends), axis=1)
+        num_stability = before_distances > after_distances
+
+        for i in range(len(eq_positions)):
+            eqs_plot = np.array(np.mat(proj) * eq_positions[i].reshape((3, 1)))
+
+            if line_indicator == 0:
+                if num_stability[i] and stabilities[i] is 'sink':
+                    eq_face = 'black'
+                elif not num_stability[i] and stabilities[i] is 'source':
+                    eq_face = 'white'
+                else:
+                    eq_face = 'grey'
+                ax.scatter(eqs_plot[0], eqs_plot[1], s=300,
+                           color='black', facecolor=eq_face, marker='o', zorder=10)
+            else:
+                continue
+
+    ####################
+    # vertex equilibria
+    ####################
+
+    evs_x = [np.sign(a), np.sign(d)]
+    evs_y = [np.sign(-b), np.sign(e - b)]
+    evs_z = [np.sign(-f), np.sign(c - f)]
+    evs = [evs_x, evs_y, evs_z]
+
+    for i, vertex in enumerate(evs):
+        if vertex[0] == 0 and vertex[1] == 0:
+            continue
+        elif vertex[0] == 0 or vertex[1] == 0:
+            if i in line_eq_vertex_indicator:
+                continue
+            elif vertex[0] < 0 or vertex[1] < 0:
+                # vertex is a sink
+                facecolor = 'black'
+            else:
+                # vertex is a source
+                facecolor = 'white'
+        else:
+            if vertex[0] == vertex[1] and vertex[0] < 0:
+                # vertex is a sink
+                facecolor = 'black'
+            elif (vertex[0] == vertex[1] and vertex[0] > 0):
+                # vertex is a source
+                facecolor = 'white'
+            else:
+                # vertex is a saddle
+                facecolor = 'grey'
+
+        eq = np.array([0, 0, 0])
+        eq[i] += 1
+        eq_plot = np.dot(np.mat(proj), np.array(eq).reshape((3, 1)))
+
+        #Plot equilibria
+        ax.scatter([eq_plot[0]], [eq_plot[1]], s=300,
+                    color='black', facecolor=facecolor, marker='o', zorder=10)
 
 
 def get_cols_and_rows(payoff_entries):
@@ -383,7 +527,7 @@ def custom_to_standard(payoff_func, entries):
 
 
 def plot_static(payoff_entries, generations=6, steps=200, background=False, ic_type='grid', ic_num=100,
-                ic_dist=0.05, ic_color='black', paths=False, path_color='inferno', edge_eq=True,
+                ic_dist=0.05, ic_color='black', paths=False, path_color='inferno', eq=True,
                 display_parameters=True, custom_func=None, vert_labels=['X', 'Y', 'Z']):
     # check to see if the arguments are of the right form and display a (hopefully) useful message if not
     if not isinstance(payoff_entries, list):
@@ -412,8 +556,8 @@ def plot_static(payoff_entries, generations=6, steps=200, background=False, ic_t
             'paths must be True for trails to be displayed '
             'or False for arrows to be displayed at the initial conditions.')
 
-    if not isinstance(edge_eq, bool) and edge_eq not in [0, 1]:
-        sys.exit('edge_eq must be a boolean value')
+    if not isinstance(eq, bool) and eq not in [0, 1]:
+        sys.exit('eq must be a boolean value')
 
     if path_color not in plt.colormaps():
         sys.exit(
@@ -480,6 +624,7 @@ def plot_static(payoff_entries, generations=6, steps=200, background=False, ic_t
         # prep for the contour map that generates the background shading
         tri_contour = np.zeros([len(ics), 3])
 
+        # Track endpoints to approximate domain equilibrium
         endpoints = np.zeros([len(ics), 2])
         # loop through each initial condition
         for x in range(len(ics)):
@@ -490,7 +635,7 @@ def plot_static(payoff_entries, generations=6, steps=200, background=False, ic_t
             xx = plot_values[0]
             yy = plot_values[1]
 
-            endpoints[x] = plot_values[:,-1]
+            endpoints[x] = plot_values[:, -1]
 
             try:
                 dist = np.sqrt(
@@ -521,33 +666,8 @@ def plot_static(payoff_entries, generations=6, steps=200, background=False, ic_t
                 continue
 
         # calculate and plot the edge equilibria if appropriate
-        if edge_eq:
+        if eq:
             equilibria(payoff_mat, ax)
-
-            poly = Polygon(zip(0.99*triangleline[0], 0.99*triangleline[1]))
-            inside_triangle = np.zeros(len(ics), bool)
-            for mm, point in enumerate(endpoints):
-                inside_triangle[mm] = poly.contains( Point(point[0], point[1]) )
-            endpoints = endpoints[inside_triangle]
-            pairwise_dists = cdist( endpoints, endpoints , 'euclidean' ) + np.eye( len(endpoints) )
-            pairwise_dists = pairwise_dists.min(axis=1)
-            tolerance = 0.01
-            if np.sum(pairwise_dists<tolerance)>0.1*len(endpoints):
-                domain_eq = endpoints[pairwise_dists<tolerance].mean(axis=0)
-
-                # define reference points
-                p1, p2, p3 = triangleline.T[:-1]
-                #Convert 2D points to 3D
-                start =  [ np.linalg.norm(np.cross(p3 - p2, p2 - domain_eq)),
-                            np.linalg.norm(np.cross(p1 - p3, p1 - domain_eq)),
-                            np.linalg.norm(np.cross(p1 - p2, p2 - domain_eq))
-                            ]
-                # Simulate the ODE long enough to find the equilibrium
-                yout = odeint(landscape, start, np.linspace(0,100, 100), args=(payoff_mat,))
-                plot_values = np.dot(proj, yout.T)
-                domain_eq=plot_values[:,-1]
-                ax.scatter(domain_eq[0], domain_eq[1], s=100, color='black', facecolor='black', marker='o', zorder=10)
-
 
         # plot the background if appropriate
         if background == 'True' or background == 1:
@@ -600,7 +720,7 @@ def plot_static(payoff_entries, generations=6, steps=200, background=False, ic_t
 
 
 def plot_animated(payoff_entries, num_fps=30, generations=30, steps=120, ic_type='grid',
-                  ic_num=100, ic_dist=0.05, dot_color='rgb', dot_size=20, edge_eq=True,
+                  ic_num=100, ic_dist=0.05, dot_color='rgb', dot_size=20, eq=True,
                   display_parameters=True, custom_func=None, vert_labels=['X', 'Y', 'Z']):
 
     import imageio
@@ -627,8 +747,8 @@ def plot_animated(payoff_entries, num_fps=30, generations=30, steps=120, ic_type
     if not isinstance(dot_size, int):
         sys.exit('dot_size must be an integer')
 
-    if not isinstance(edge_eq, bool) and edge_eq not in [0, 1]:
-        sys.exit('edge_eq must be a boolean value')
+    if not isinstance(eq, bool) and eq not in [0, 1]:
+        sys.exit('eq must be a boolean value')
 
     if not isinstance(display_parameters, bool) and display_parameters not in [0, 1]:
         sys.exit('display_parameters must be a boolean value')
@@ -683,8 +803,11 @@ def plot_animated(payoff_entries, num_fps=30, generations=30, steps=120, ic_type
     gs = gridspec.GridSpec(n_rows, n_cols, hspace=0.2, wspace=0.3)
 
     # Plot fixed parts of the animation
-    for mm, combo in enumerate(combinations):
+    for mm in range(len(combinations)):
+        combo = combinations[mm]
         ax = fig.add_subplot(gs[mm])
+        endpoints = xy_data[mm, :, :, -1]
+
         # plot the simplex edges
         ax.plot(triangleline[0], triangleline[1], clip_on=False,
                 color="black", zorder=3, linewidth=0.5)
@@ -704,8 +827,35 @@ def plot_animated(payoff_entries, num_fps=30, generations=30, steps=120, ic_type
         ax.set_aspect(1)  # aspect ratio of 1
 
         # Plot equilibria if True
-        if edge_eq:
+        if eq:
             equilibria(np.reshape(combo, (3, 3)), ax)
+
+            poly = Polygon(zip(0.99*triangleline[0], 0.99*triangleline[1]))
+            inside_triangle = np.zeros(len(ics), bool)
+            for nn, point in enumerate(endpoints):
+                inside_triangle[nn] = poly.contains(Point(point[0], point[1]))
+
+            if np.sum(inside_triangle) > 0:
+                endpoints = endpoints[inside_triangle]
+                pairwise_dists = cdist(endpoints, endpoints, 'euclidean') + np.eye(len(endpoints))
+                pairwise_dists = pairwise_dists.min(axis=1)
+                tolerance = 0.01
+                if np.sum(pairwise_dists < tolerance) > 0.1*len(endpoints):
+                    domain_eq = endpoints[pairwise_dists < tolerance].mean(axis=0)
+
+                    # define reference points
+                    p1, p2, p3 = triangleline.T[:-1]
+                    # Convert 2D points to 3D
+                    start = [np.linalg.norm(np.cross(p3 - p2, p2 - domain_eq)),
+                             np.linalg.norm(np.cross(p1 - p3, p1 - domain_eq)),
+                             np.linalg.norm(np.cross(p1 - p2, p2 - domain_eq))]
+
+                    # Simulate the ODE long enough to find the equilibrium
+                    yout = odeint(landscape, start, np.linspace(0, 100, 100), args=(np.reshape(combo, (3, 3)),))
+                    plot_values = np.dot(proj, yout.T)
+                    domain_eq = plot_values[:, -1]
+                    fig.add_subplot(gs[mm]).scatter(domain_eq[0], domain_eq[1], s=80, color='black', facecolor='black', marker='o', zorder=10)
+
         # Display current parameters as title
         if display_parameters:
             a = np.reshape(combo, [3, 3])
