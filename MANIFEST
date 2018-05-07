@@ -2,3 +2,4 @@
 setup.cfg
 setup.py
 egtplot/__init__.py
+egtplot/bomze_payoffs.pkl
