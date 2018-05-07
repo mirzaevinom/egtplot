@@ -203,7 +203,14 @@ def load_bomze_payoffs():
     Loads Bomze payoffs as a list
     """
     import pickle
-    with open(os.path.dirname(__file__)+'/bomze_payoffs.pkl', 'rb') as input_file:
+    fname = './bomze_payoffs.pkl'
+
+    if not os.path.exists(fname):
+        import urllib
+        url = "https://raw.github.com/mirzaevinom/egtplot/master/egtplot/bomze_payoffs.pkl"
+        urllib.request.urlretrieve(url, fname)
+
+    with open(fname, 'rb') as input_file:
         bomze_payoffs = pickle.load(input_file)
 
     return bomze_payoffs
