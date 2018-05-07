@@ -7,7 +7,7 @@ setup(
   author = 'Inom Mirzaev and Drew Williamson',
   author_email = 'mirzaev@colorado.edu',
   url = 'https://github.com/mirzaevinom/egtplot', # use the URL to the github repo
-  download_url = 'https://github.com/mirzaevinom/egtplot/archive/0.41.tar.gz', # I'll explain this in a second
+  download_url = 'https://github.com/mirzaevinom/egtplot/archive/0.4.1.tar.gz', # I'll explain this in a second
   keywords = ['egt', 'simplex', 'evolutionary game theory', 'evolution'], # arbitrary keywords
   classifiers = [],
   install_requires=['matplotlib', 'scipy', 'shapely', 'imageio', 'moviepy', 'tqdm']
