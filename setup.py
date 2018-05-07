@@ -2,7 +2,7 @@ from distutils.core import setup
 setup(
   name = 'egtplot',
   packages = ['egtplot'], # this must be the same as the name above
-  version = '0.3',
+  version = '0.4',
   description = 'a package for plotting 3-strategy evolutionary game solutions',
   author = 'Inom Mirzaev and Drew Williamson',
   author_email = 'mirzaev@colorado.edu',

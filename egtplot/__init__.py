@@ -3,7 +3,7 @@ from __future__ import division
 import inspect
 import sys
 from itertools import product
-import copy
+import copy, os
 
 import matplotlib.gridspec as gridspec
 import matplotlib.patches as patches
@@ -203,7 +203,7 @@ def load_bomze_payoffs():
     Loads Bomze payoffs as a list
     """
     import pickle
-    with open('./bomze_payoffs.pkl', 'rb') as input_file:
+    with open(os.path.dirname(__file__)+'/bomze_payoffs.pkl', 'rb') as input_file:
         bomze_payoffs = pickle.load(input_file)
 
     return bomze_payoffs
