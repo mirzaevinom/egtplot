@@ -242,25 +242,27 @@ def equilibria(payoffs, ax):
 
     elif i == 0 and j == 0 and k == 0:
         line_indicator = 1
+        try:
+            if c != 0:
+                endpts = [proj_to_from(-0.5, (0.5*b-a)/c), proj_to_from(0.5, -(a+0.5*b)/c)]
+                if np.any(~np.isfinite(endpts)):
+                    endpts = [proj_to_from(-1, (1*b-a)/c), proj_to_from(1, -(a+1*b)/c)]
+            elif b != 0:
+                endpts = [proj_to_from(-a/b, -1), proj_to_from(-a/b, 1)]
 
-        if c != 0:
-            endpts = [proj_to_from(-0.5, (0.5*b-a)/c), proj_to_from(0.5, -(a+0.5*b)/c)]
-            if np.any(~np.isfinite(endpts)):
-                endpts = [proj_to_from(-1, (1*b-a)/c), proj_to_from(1, -(a+1*b)/c)]
-        elif b != 0:
-            endpts = [proj_to_from(-a/b, -1), proj_to_from(-a/b, 1)]
+            elif f != 0:
+                endpts = [proj_to_from(-0.5, (0.5*e-d)/f), proj_to_from(0.5, -(0.5*e+d)/f)]
+                if np.any(~np.isfinite(endpts)):
+                    endpts = [proj_to_from(-1, (1*e-d)/f), proj_to_from(1, -(1*e+d)/f)]
+            else:
+                endpts = [proj_to_from(-d/e, -1), proj_to_from(-d/e, 1)]
 
-        elif f != 0:
-            endpts = [proj_to_from(-0.5, (0.5*e-d)/f), proj_to_from(0.5, -(0.5*e+d)/f)]
-            if np.any(~np.isfinite(endpts)):
-                endpts = [proj_to_from(-1, (1*e-d)/f), proj_to_from(1, -(1*e+d)/f)]
-        else:
-            endpts = [proj_to_from(-d/e, -1), proj_to_from(-d/e, 1)]
-
-        x_line = get_extraploted_line(*endpts)
-        poly = Polygon(zip(triangleline[0], triangleline[1]))
-        inter = np.asarray(x_line.intersection(poly).xy)
-        ax.plot(inter[0], inter[1], zorder=5, color='black', linewidth=4, linestyle='--')
+            x_line = get_extraploted_line(*endpts)
+            poly = Polygon(zip(triangleline[0], triangleline[1]))
+            inter = np.asarray(x_line.intersection(poly).xy)
+            ax.plot(inter[0], inter[1], zorder=5, color='black', linewidth=4, linestyle='--')
+        except:
+            pass
 
     elif (i < 0 and j < 0 and k < 0) or (i > 0 and j > 0 and k > 0):
 
