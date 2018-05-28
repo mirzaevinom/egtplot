@@ -60,5 +60,8 @@ Mirzaev I., Williamson D. and Scott J., egtplot: A Python Package for 3-Strategy
 
 ### Acknowledgements
 
-* Authors would like to thank [Mathematical Biosciences Institue](http://mbi.osu.edu) (MBI) at Ohio State University, for partially supporting this research. MBI receives its funding through the National Science Foundation grant DMS 1440386.
+* The authors would like to thank [Mathematical Biosciences Institue](http://mbi.osu.edu) (MBI) at Ohio State University, for partially supporting this research. MBI receives its funding through the National Science Foundation grant DMS 1440386.
 * We gratefully acknowledge the work of Hanna Schenk whose code on her [github](https://github.com/HannaSchenk/RQchaos) inspired this project.
+
+### Contributing and Issues
+Please use [GitHub Issues](https://github.com/mirzaevinom/egtplot/issues) for issue tracking and bugs. Feel free to contact [Drew](https://github.com/drew-williamson) and [Inom](https://github.com/mirzaevinom) if you would like to contribute to `egtplot` or with questions and comments.
