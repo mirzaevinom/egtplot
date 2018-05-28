@@ -9,6 +9,10 @@ This is a software package for plotting and animating three-strategy evolutionar
 
 <img src="images/animation_1.gif" width="400" height="400" />
 
+## Use Cases
+
+While there are many use cases for this software, our group's particular focus is on the mathematical modeling of cancer and cancer therapies through evolutionary game theory [@kaznatcheev2017cancer, @kaznatcheev2015edge, @Kaznatcheev179259]. For details on analytical treatments of evolutionary games, please see Artem Kaznatcheev's blog at [Theory, Evolution, and Games Group](https://egtheory.wordpress.com/).
+
 ### Authorship
 
 Inom Mirzaev and [Drew FK Williamson](https://github.com/drew-williamson) contributed equally to this work.
