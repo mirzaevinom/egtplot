@@ -50,6 +50,9 @@ cd egtplot-master
 python setup.py install
 ```
 
+* Finally, we also have created a Docker container for running a jupyter notebook with egtplot:
+[drewfkw/egtplot](https://hub.docker.com/r/drewfkw/egtplot/)
+
 ### Specific Usage
 * This software has two main functions: `plot_static` for plotting static simplex figures and `plot_animated` for generating simplex animations.
 * For detailed usage of these functions we refer to our interactive jupyter notebook: [`egtplot_demonstration.ipynb`](egtplot_demonstration.ipynb)

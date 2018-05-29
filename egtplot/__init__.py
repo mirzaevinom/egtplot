@@ -1,1 +1,1 @@
-from code import *
+from .egtplot_code import *

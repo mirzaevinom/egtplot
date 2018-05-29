@@ -229,7 +229,7 @@ def load_bomze_payoffs():
         import urllib
 
         url = (
-            "https://raw.github.com/mirzaevinom/egtplot/master/egtplot/bomze_payoffs.pkl"
+          "https://raw.github.com/mirzaevinom/egtplot/master/egtplot/bomze_payoffs.pkl"
         )
         urllib.request.urlretrieve(url, fname)
 
@@ -452,7 +452,7 @@ def equilibria(payoffs, ax):
             eq_subgame_full[0][subgame[1]] += 1 - eq_subgame
             eqs.append(eq_subgame_full)
 
-            # make a point to test numerically that's close to the equilibrium but is in the domain
+            # make a point to test that's close to the equilibrium but is in the domain
             moved = eq_subgame_full.copy()
             ind = np.argmin(moved)
             moved[0, ind] += 0.01
@@ -637,28 +637,56 @@ def plot_static(
 ):
     """Function to plot static evolutionary game solutions.
 
-    Arguments:
-        payoff_entries (list): list of nine lists containing entries in the payoff matrix
-        generations (int): the number of epochs to simulate forward the ODEs; default 6.
-        steps (int): the number of steps simulated per generation; default 200
-        background (bool): controls whether the background of the simplex is colored by speed; default False
-        ic_type (str): the distribution of initial conditions ('random', 'grid', or 'edge'); default 'grid'
-        ic_num (int): the number of initial conditions; default 100
-        ic_dist (float): the distance between initial conditions when ic_type = 'random'; default 0.05
-        ic_color (string): the color of each initial condition; default 'black'
-        paths (bool): whether the paths taken by each initial condition should be displayed; default False
-        path_colors (string): the colormap used for the paths for each initial condition; default 'inferno'
-        eq (bool): whether or not equilibria should be plotted on the simplex; default True
-        display_parameters (bool): whether or not to print the payoff matrix next to the simplex; default True
-        custom_func (function): makes the payoffs a function of other parameters; default None
-        vert_labels (list): list of strings that should label the vertices; default ['X', 'Y', 'Z']
+    Arguments
+    ---------
+        payoff_entries (list): list of nine lists containing entries in the payoff
+            matrices
 
-    Returns:
+        generations (int): the number of epochs to simulate forward the ODEs; default 6
+
+        steps (int): the number of steps simulated per generation; default 200
+
+        background (bool): controls whether the background of the simplex is colored by
+            speed; default False
+
+        ic_type (str): the distribution of initial conditions ('random', 'grid', or
+            'edge'); default 'grid'
+
+        ic_num (int): the number of initial conditions; default 100
+
+        ic_dist (float): the distance between initial conditions when ic_type =
+            'random'; default 0.05
+
+        ic_color (string): the color of each initial condition; default 'black'
+
+        paths (bool): whether the paths taken by each initial condition should be
+            displayed; default False
+
+        path_colors (string): the colormap used for the paths for each initial
+            condition; default 'inferno'
+
+        eq (bool): whether or not equilibria should be plotted on the simplex;
+            default True
+
+        display_parameters (bool): whether or not to print the payoff matrix next to
+            the simplex; default True
+
+        custom_func (function): makes the payoffs a function of other parameters;
+            default None
+
+        vert_labels (list): list of strings that should label the vertices; default
+            ['X', 'Y', 'Z']
+
+    Returns
+    -------
         A matplotlib figure object containing the designated simplex.
 
-    Please see https://github.com/mirzaevinom/egtplot/blob/master/egtplot_demonstration.ipynb for more.
+    More
+    ----
+    See https://github.com/mirzaevinom/egtplot/blob/master/egtplot_demonstration.ipynb
+    for greater detail an examples.
     """
-    # check to see if the arguments are of the right form and display a (hopefully) useful message if not
+    # check to see if the arguments are of the right form and display a message if not
     if not isinstance(payoff_entries, list):
         sys.exit(
             "payoff_matrices must be a list of lists of each parameter a through i"
@@ -672,8 +700,9 @@ def plot_static(
 
     if not isinstance(background, bool) and background not in [0, 1]:
         sys.exit(
-            "Background must be a boolean value. Choose 'True' for a shaded background to visualize speed "
-            "or choose 'False' for a blank background."
+            "Background must be a boolean value. \
+            Choose 'True' for a shaded background to visualize speed \
+            or choose 'False' for a blank background."
         )
 
     if ic_type not in ["grid", "random", "edge"]:
@@ -693,8 +722,8 @@ def plot_static(
 
     if path_color not in plt.colormaps():
         sys.exit(
-            "Plotting will fail silently if you do not specify a valid colormap for this argument. "
-            "Use pyplot.colormaps() to get a list of valid colormaps."
+            "Plotting will fail silently if you do not specify a valid colormap for \
+            this argument. Use pyplot.colormaps() to get a list of valid colormaps."
         )
 
     if not isinstance(display_parameters, bool) and display_parameters not in [0, 1]:
@@ -928,26 +957,50 @@ def plot_animated(
 ):
     """Function to plot animated evolutionary game solutions.
 
-    Arguments:
-        payoff_entries (list): list of nine lists containing entries in the payoff matrix
-        num_fps (int): the desired fps of the output animation; default 30
-        generations (int): the number of epochs to simulate forward the ODEs; default 6.
-        steps (int): the number of steps simulated per generation; default 200
-        ic_type (str): the distribution of initial conditions ('random', 'grid', or 'edge'); default 'grid'
-        ic_num (int): the number of initial conditions; default 100
-        ic_dist (float): the distance between initial conditions when ic_type = 'random'; default 0.05
-        dot_color (string): the color of each moving initial condition; default 'rgb'
-        dot_size (int): the size of each moving initial condition in point; default 20
-        eq (bool): whether or not equilibria should be plotted on the simplex; default True
-        display_parameters (bool): whether or not to print the payoff matrix next to the simplex; default True
-        custom_func (function): makes the payoffs a function of other parameters; default None
-        vert_labels (list): list of strings that should label the vertices; default ['X', 'Y', 'Z']
+    Arguments
+    ---------
+        payoff_entries (list): list of nine lists containing entries in the payoff
+            matrices
 
-    Returns:
+        num_fps (int): the desired fps of the output animation; default 30
+
+        generations (int): the number of epochs to simulate forward the ODEs; default 6
+
+        steps (int): the number of steps simulated per generation; default 200
+
+        ic_type (str): the distribution of initial conditions ('random', 'grid', or
+            'edge'); default 'grid'
+
+        ic_num (int): the number of initial conditions; default 100
+
+        ic_dist (float): the distance between initial conditions when ic_type =
+            'random'; default 0.05
+
+        dot_color (string): the color of each moving initial condition; default 'rgb'
+
+        dot_size (int): the size of each moving initial condition in point; default 20
+
+        eq (bool): whether or not equilibria should be plotted on the simplex; default
+            True
+
+        display_parameters (bool): whether or not to print the payoff matrix next to
+        the simplex; default True
+
+        custom_func (function): makes the payoffs a function of other parameters;
+            default None
+
+        vert_labels (list): list of strings that should label the vertices; default
+            ['X', 'Y', 'Z']
+
+    Returns
+    -------
         animation: A moviepy VideoClip object containing the designated animated simplex.
         fps: An int equal to the desired frame per second of the animation.
 
-    Please see https://github.com/mirzaevinom/egtplot/blob/master/egtplot_demonstration.ipynb for more.
+    More
+    ----
+    See https://github.com/mirzaevinom/egtplot/blob/master/egtplot_demonstration.ipynb
+    for greater detail an examples.
     """
 
     import imageio

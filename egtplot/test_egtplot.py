@@ -1,7 +1,7 @@
 ##########
 # Automated unit testing
 ##########
-from code import *
+from egtplot_code import *
 import unittest
 
 class TestMainFunctions(unittest.TestCase):
