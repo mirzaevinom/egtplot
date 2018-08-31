@@ -1,5 +1,7 @@
 # egtplot: A Python Package for Three-Strategy Evolutionary Games
 
+[![DOI](http://joss.theoj.org/papers/10.21105/joss.00735/status.svg)](http://joss.theoj.org/papers/10.21105/joss.00735)
+
 This is a software package for plotting and animating three-strategy evolutionary games on a triangular simplex.
 * The package can be used to create phase portraits of 3-strategy games
 
