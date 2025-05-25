@@ -332,7 +332,7 @@ def equilibria(payoffs, ax):
             # equilibrium is a "centre"
             stability = "centre"
             eq_face = "white"
-            eq_plot = np.dot(np.mat(proj), np.array(eq).reshape((3, 1)))
+            eq_plot = np.dot(np.asmatrix(proj), np.array(eq).reshape((3, 1)))
             ax.scatter(
                 [eq_plot[0]],
                 [eq_plot[1]],
@@ -343,7 +343,7 @@ def equilibria(payoffs, ax):
                 zorder=11,
             )
 
-        eq_plot = np.dot(np.mat(proj), np.array(eq).reshape((3, 1)))
+        eq_plot = np.dot(np.asmatrix(proj), np.array(eq).reshape((3, 1)))
         ax.scatter(
             [eq_plot[0]],
             [eq_plot[1]],
@@ -493,7 +493,7 @@ def equilibria(payoffs, ax):
         num_stability = before_distances > after_distances
 
         for i in range(len(eq_positions)):
-            eqs_plot = np.array(np.mat(proj) * eq_positions[i].reshape((3, 1)))
+            eqs_plot = np.array(np.asmatrix(proj) * eq_positions[i].reshape((3, 1)))
 
             if line_indicator == 0:
                 if num_stability[i] and stabilities[i] is "sink":
@@ -548,7 +548,7 @@ def equilibria(payoffs, ax):
 
         eq = np.array([0, 0, 0])
         eq[i] += 1
-        eq_plot = np.dot(np.mat(proj), np.array(eq).reshape((3, 1)))
+        eq_plot = np.dot(np.asmatrix(proj), np.array(eq).reshape((3, 1)))
 
         # Plot equilibria
         ax.scatter(
